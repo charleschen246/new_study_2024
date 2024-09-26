@@ -1,0 +1,13 @@
+sources:
+  - name: super_store_analysis
+    database: plucky-vision-419400
+    schema: dbt_cchen
+    tables:
+      - name: Orders
+        description: "This dataset includes all orders made by a customer"
+        columns:
+          - name: 'Row ID'
+            tests:
+              - unique
+      - name: returns
+        description: "This dataset contains all results made by a customer on a specific date"
