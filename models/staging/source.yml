@@ -6,8 +6,12 @@ sources:
       - name: Orders
         description: "This dataset includes all orders made by a customer"
         columns:
-          - name: 'Row ID'
+          - name: "`Row ID`"
             tests:
-              - unique
+              - unique:
+                  config:
+                    severity: error
+                    error_if: ">0"
+                    warn_if: ">0"
       - name: returns
         description: "This dataset contains all results made by a customer on a specific date"
