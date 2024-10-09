@@ -14,7 +14,7 @@ source as (
 renamed as (
 
     select
-         `Row ID` as Order_id 
+         `Row ID` as Order_id_name 
         ,`Order Date` as order_date
         , `Ship Mode` as ship_date
         , `Ship Date` as ship_mode
