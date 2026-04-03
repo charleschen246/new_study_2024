@@ -1,0 +1,13 @@
+﻿my_project:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: my-project-111-257618
+      dataset: dbt_my_project
+      threads: 1
+      keyfile: C:\Users\cchen\Downloads\dbt-sa-key.json
+      location: US
+      priority: interactive
+      timeout_seconds: 300

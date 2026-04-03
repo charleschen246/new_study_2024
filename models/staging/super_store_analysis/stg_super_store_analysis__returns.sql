@@ -1,4 +1,4 @@
-with 
+with
 
 source as (
 
@@ -9,8 +9,8 @@ source as (
 renamed as (
 
     select
-        returned,
-        'order id' as order_id
+        `Returned`  as returned,
+        `Order ID`  as order_id
 
     from source
 
