@@ -94,8 +94,8 @@ final as (
                                and o.city         = g.city
                                and o.state        = g.state
                                and CAST(o.postal_code AS STRING) = g.postal_code
-    left join order_dates   od on o.order_date    = od.full_date
-    left join ship_dates    sd on o.ship_date     = sd.full_date
+    left join order_dates   od on parse_date('%m/%d/%Y', o.order_date)    = od.full_date
+    left join ship_dates    sd on parse_date('%m/%d/%Y', o.ship_date)     = sd.full_date
     left join returns       r  on o.order_id      = r.order_id
 
 )

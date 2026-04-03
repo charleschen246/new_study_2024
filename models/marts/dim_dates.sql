@@ -7,9 +7,9 @@
 
 with order_dates as (
 
-    select order_date as date_value from {{ ref('stg_super_store_analysis__Orders') }}
+    select parse_date('%m/%d/%Y', order_date) as date_value from {{ ref('stg_super_store_analysis__Orders') }}
     union distinct
-    select ship_date  as date_value from {{ ref('stg_super_store_analysis__Orders') }}
+    select parse_date('%m/%d/%Y', ship_date)  as date_value from {{ ref('stg_super_store_analysis__Orders') }}
 
 ),
 

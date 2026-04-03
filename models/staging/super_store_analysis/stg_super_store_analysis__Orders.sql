@@ -15,7 +15,7 @@ renamed as (
 
     select
         `Row ID`        as row_id,
-        `Order ID`      as order_id_name,
+        `Order ID`      as order_id,
         `Order Date`    as order_date,
         `Ship Date`     as ship_date,
         `Ship Mode`     as ship_mode,
