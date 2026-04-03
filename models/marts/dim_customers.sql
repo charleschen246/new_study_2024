@@ -11,7 +11,7 @@ with orders as (
         customer_id,
         customer_name,
         segment
-    from {{ ref('stg_super_store_analysis__Orders') }}
+    from {{ ref('stg_super_store_analysis__orders') }}
 
 ),
 

@@ -34,7 +34,7 @@ renamed as (
         ROUND(CAST(`Sales` AS FLOAT64), 2)    as sales,
         CAST(`Quantity` AS INT64)             as quantity,
         ROUND(CAST(`Discount` AS FLOAT64), 2) as discount,
-        {{ rounding('`Profit`', 2) }}         as profit
+        ROUND(CAST(`Profit` AS FLOAT64), 2)   as profit
 
     from source
 

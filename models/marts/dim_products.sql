@@ -12,7 +12,7 @@ with orders as (
         product_name,
         category,
         sub_category
-    from {{ ref('stg_super_store_analysis__Orders') }}
+    from {{ ref('stg_super_store_analysis__orders') }}
 
 ),
 

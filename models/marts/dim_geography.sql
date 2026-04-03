@@ -13,7 +13,7 @@ with orders as (
         state,
         postal_code,
         region
-    from {{ ref('stg_super_store_analysis__Orders') }}
+    from {{ ref('stg_super_store_analysis__orders') }}
 
 ),
 
