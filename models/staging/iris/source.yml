@@ -1,0 +1,7 @@
+sources:
+  - name: iris
+    database: my-project-111-257618
+    schema: dbt_my_project
+    tables:
+      - name: raw_iris
+        description: "Iris flower dataset — 150 observations of sepal/petal measurements across 3 species."
