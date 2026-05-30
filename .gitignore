@@ -5,3 +5,10 @@ dbt_packages/
 logs/
 profiles.yml
 *.json
+package-lock.yml
+
+# CI service-account keyfile written at runtime (also covered by *.json)
+gcp-key.json
+
+# Elementary generated dashboard (build artifact)
+edr_target/

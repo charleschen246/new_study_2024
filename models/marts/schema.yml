@@ -109,6 +109,17 @@ models:
       Order fact table — one row per order line item.
       Contains all measures (sales, profit, quantity, discount)
       and FK references to all four dimension tables.
+    tests:
+      - elementary.volume_anomalies:
+          tags: ['elementary']
+          arguments:
+            timestamp_column: order_date
+            time_bucket:
+              period: day
+              count: 1
+            days_back: 90
+            backfill_days: 2
+            anomaly_sensitivity: 3
     columns:
       - name: order_line_id
         description: "Natural row-level identifier from source (Row ID)."
@@ -151,6 +162,14 @@ models:
         description: "FK → dim_dates.date_key for the ship date."
         tests:
           - not_null
+      - name: order_date
+        description: "Order date as a DATE — used by elementary volume_anomalies."
+        tests:
+          - not_null
+      - name: ship_date
+        description: "Ship date as a DATE."
+        tests:
+          - not_null
       - name: sales
         description: "Gross sales amount for the line item."
         tests:
@@ -169,5 +188,39 @@ models:
           - not_null
       - name: is_returned
         description: "TRUE if the order was returned."
+        tests:
+          - not_null
+
+  - name: fct_earthquakes
+    description: >
+      One row per USGS earthquake event, fed by a live daily ingest
+      (ingest/usgs_earthquakes.py). Provides a real, growing time series so
+      Elementary's volume_anomalies test has a baseline to detect deviations.
+    tests:
+      - elementary.volume_anomalies:
+          tags: ['elementary']
+          arguments:
+            timestamp_column: event_time
+            # Only score complete daily buckets; the current day is still being
+            # ingested and its partial volume would read as a false-positive drop.
+            where_expression: "event_time < timestamp_trunc(current_timestamp(), day)"
+            time_bucket:
+              period: day
+              count: 1
+            days_back: 90
+            backfill_days: 2
+            anomaly_sensitivity: 3
+    columns:
+      - name: earthquake_key
+        description: "Surrogate key (MD5 hash of the USGS event id)."
+        tests:
+          - unique
+          - not_null
+      - name: id
+        description: "USGS natural event id."
+        tests:
+          - not_null
+      - name: event_time
+        description: "Event origin time (UTC) — used by elementary volume_anomalies."
         tests:
           - not_null

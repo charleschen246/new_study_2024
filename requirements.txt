@@ -1,0 +1,5 @@
+# Pinned to match the local .venv so CI reproduces local behavior.
+dbt-core==1.11.7
+dbt-bigquery==1.11.1
+google-cloud-bigquery==3.41.0
+requests==2.33.1
