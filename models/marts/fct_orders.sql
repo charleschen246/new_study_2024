@@ -72,6 +72,8 @@ final as (
         g.geography_key,
         od.date_key                             as order_date_key,
         sd.date_key                             as ship_date_key,
+        od.full_date                            as order_date,
+        sd.full_date                            as ship_date,
 
         -- degenerate dimensions
         o.ship_mode,

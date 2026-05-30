@@ -1,0 +1,86 @@
+name: Daily USGS ingest + dbt anomaly tests
+
+# Fetches the USGS earthquake feed once a day, appends it to BigQuery, then
+# rebuilds the earthquake models and runs Elementary's volume_anomalies test.
+on:
+  schedule:
+    # 09:00 UTC daily. GitHub may delay scheduled runs under load.
+    - cron: "0 9 * * *"
+  workflow_dispatch: {}
+
+# Avoid overlapping runs appending duplicate windows.
+concurrency:
+  group: daily-usgs-ingest
+  cancel-in-progress: false
+
+jobs:
+  ingest-and-test:
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+      DBT_PROFILES_DIR: ${{ github.workspace }}/ci
+      BQ_PROJECT: my-project-111-257618
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write service-account keyfile
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          if [ -z "$GCP_SA_KEY" ]; then
+            echo "::error::Secret GCP_SA_KEY is not set. Add it in repo Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          printf '%s' "$GCP_SA_KEY" > "$GOOGLE_APPLICATION_CREDENTIALS"
+
+      - name: Generate dbt profiles.yml
+        run: |
+          mkdir -p "$DBT_PROFILES_DIR"
+          cat > "$DBT_PROFILES_DIR/profiles.yml" <<EOF
+          my_project:
+            target: prod
+            outputs:
+              prod:
+                type: bigquery
+                method: service-account
+                project: ${BQ_PROJECT}
+                dataset: dbt_my_project
+                keyfile: ${GOOGLE_APPLICATION_CREDENTIALS}
+                threads: 4
+                location: US
+                priority: interactive
+          elementary:
+            target: prod
+            outputs:
+              prod:
+                type: bigquery
+                method: service-account
+                project: ${BQ_PROJECT}
+                dataset: dbt_my_project_elementary
+                keyfile: ${GOOGLE_APPLICATION_CREDENTIALS}
+                threads: 4
+                location: US
+                priority: interactive
+          EOF
+
+      - name: Ingest USGS earthquakes (past 24h)
+        run: python ingest/usgs_earthquakes.py
+
+      - name: Install dbt packages
+        run: dbt deps
+
+      - name: Build earthquake models
+        run: dbt run --select stg_usgs__earthquakes fct_earthquakes
+
+      - name: Run anomaly tests
+        run: dbt test --select fct_earthquakes
