@@ -51,14 +51,14 @@ edr report --profiles-dir .
 
 ### Layers (configured in `dbt_project.yml`)
 
-- `models/staging/` — materialized as **views**. One subfolder per source system.
-  - `usgs/` — `stg_usgs__earthquakes` typed/cleaned from `source('usgs', 'raw_usgs_earthquakes')`. Casts `event_time`/`magnitude`/`depth_km`/`lat`/`lon`, and dedupes the overlapping daily pulls with `qualify row_number() over (partition by id order by ingested_at desc) = 1`.
+- `models/staging/` — materialized as **views**.
+  - `stg_usgs__earthquakes` — typed/cleaned from `source('usgs', 'raw_usgs_earthquakes')`. Casts `event_time`/`magnitude`/`depth_km`/`lat`/`lon`, and dedupes the overlapping daily pulls with `qualify row_number() over (partition by id order by ingested_at desc) = 1`.
 - `models/marts/` — materialized as **tables** in the `marts` schema (i.e. `dbt_my_project_marts` on BigQuery).
   - `fct_earthquakes` — one row per USGS event (MD5 surrogate key on the event `id`). Exposes `event_time` (TIMESTAMP) and `event_date` (DATE) so Elementary's `volume_anomalies` test has a column to bucket on.
 
 ### Sources
 
-Defined in `models/staging/usgs/source.yml` (usgs: `raw_usgs_earthquakes`), pointing at the `dbt_my_project` dataset. `raw_usgs_earthquakes` is **append-only**, written by `ingest/usgs_earthquakes.py` (one row per event-id per ingestion; deduped in staging).
+Defined in `models/staging/source.yml` (usgs: `raw_usgs_earthquakes`), pointing at the `dbt_my_project` dataset. `raw_usgs_earthquakes` is **append-only**, written by `ingest/usgs_earthquakes.py` (one row per event-id per ingestion; deduped in staging).
 
 ### Tests
 
