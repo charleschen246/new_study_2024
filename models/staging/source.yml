@@ -1,17 +1,9 @@
+version: 2
+
 sources:
-  - name: super_store_analysis
+  - name: usgs
     database: my-project-111-257618
     schema: dbt_my_project
     tables:
-      - name: Orders
-        description: "This dataset includes all orders made by a customer"
-        columns:
-          - name: "`Row ID`"
-            tests:
-              - unique:
-                  config:
-                    severity: error
-                    error_if: ">0"
-                    warn_if: ">0"
-      - name: returns
-        description: "This dataset contains all results made by a customer on a specific date"
+      - name: raw_usgs_earthquakes
+        description: "Raw USGS earthquake events, appended daily by ingest/usgs_earthquakes.py. One row per (event id, ingestion); deduped downstream."

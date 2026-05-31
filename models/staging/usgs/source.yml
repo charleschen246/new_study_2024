@@ -1,9 +1,0 @@
-version: 2
-
-sources:
-  - name: usgs
-    database: my-project-111-257618
-    schema: dbt_my_project
-    tables:
-      - name: raw_usgs_earthquakes
-        description: "Raw USGS earthquake events, appended daily by ingest/usgs_earthquakes.py. One row per (event id, ingestion); deduped downstream."
